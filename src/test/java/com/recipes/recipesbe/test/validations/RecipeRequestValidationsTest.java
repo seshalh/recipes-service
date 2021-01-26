@@ -46,7 +46,7 @@ class RecipeRequestValidationsTest {
 	@Test
 	void givenInvalidRequestWhenFoundThenReturnBadRequest() throws Exception {
 
-		String contentToBeCreated = getNewRecipeInJson();
+		String contentToBeCreated = getNewRecipeInJson(1);
 		
 		Mockito.when(mockRecipeService.createRecipe(Mockito.any()))
 			   .thenReturn(new Recipe());
@@ -68,7 +68,7 @@ class RecipeRequestValidationsTest {
 
 		
 		
-		String contentToBeCreated = getNewRecipeInJson();
+		String contentToBeCreated = getNewRecipeInJson(2);
 		
 		Mockito.when(mockRecipeService.createRecipe(Mockito.any()))
 		       .thenReturn(new Recipe());
@@ -87,7 +87,7 @@ class RecipeRequestValidationsTest {
 	}
 	@Test
 	void givenInvalidIngedientsValueWhenFoundThenReturnBadRequest() throws Exception {
-		String contentToBeCreated = getNewRecipeInJson();
+		String contentToBeCreated = getNewRecipeInJson(3);
 		
 		Mockito.when(mockRecipeService.createRecipe(Mockito.any()))
 		       .thenReturn(new Recipe());
@@ -110,7 +110,7 @@ class RecipeRequestValidationsTest {
 	void givenInvalidCookingInstructionsThenReturnBadRequest() throws Exception {
 
 		
-		String contentToBeCreated = getNewRecipeInJson();
+		String contentToBeCreated = getNewRecipeInJson(4);
 		
 		Mockito.when(mockRecipeService.createRecipe(Mockito.any()))
 		       .thenReturn(new Recipe());
@@ -131,7 +131,7 @@ class RecipeRequestValidationsTest {
 	void givenInvalidCreationDateThenReturnBadRequest() throws Exception {
 
 				
-		String contentToBeCreated = getNewRecipeInJson();
+		String contentToBeCreated = getNewRecipeInJson(5);
 		
 		Mockito.when(mockRecipeService.createRecipe(Mockito.any())).thenReturn(new Recipe());
 
@@ -149,18 +149,40 @@ class RecipeRequestValidationsTest {
 	}
 	
 	
-	public String getNewRecipeInJson() throws Exception
+	public String getNewRecipeInJson(int type) throws Exception
 	{
 		JSONObject input = new JSONObject();
+		
 		input.put("id", 2);
+		
+		if(type != 1)   // Bad request
+			input.put("name", "Fish curry");
+		
 		input.put("isVegetarian", false);
-		input.put("noOfServings", 1);
-		input.put("ingredients", "chicken,rice");
-		input.put("cookingInstructions", "spicy");
+		
+		if(type == 2)   // no of servings 0
+			input.put("noOfServings", 0);
+		else
+		 input.put("noOfServings", 6);
+		
+		if(type == 4)  // invalid cooking instructions
+			input.put("cookingInstructions", "");
+		else
+			input.put("cookingInstructions", "spicy");
+		
+		if (type != 5)  // missing date of creation
 		input.put("dateOfCreation", "24‐01‐2021 18:30");
-		JSONArray array = new JSONArray();
-		array.put(new JSONObject());
-		input.put("ingredients", array);
+		
+		if(type == 3)   // invalid ingredients
+		{
+			input.put("ingredients", "[]");
+		}
+		else
+		{
+			JSONArray array = new JSONArray();
+			array.put(new JSONObject());
+			input.put("ingredients", array);
+		}
 		
 		return input.toString();
 		
